@@ -1,22 +1,24 @@
-// START HEROKU SETUP
+// HEROKU安装配置：Heroku是一个支持多种编程语言的云平台即服务。
 var express = require("express");
 var app = express();
+
+// 引入AWS依赖，并配置使用区域
 var AWS = require('aws-sdk');
 AWS.config.update({region: 'us-east-1'});
+
+// 实例化
 var rekognition = new AWS.Rekognition();
+
 var request = require('request').defaults({ encoding: null });
 app.get('/', function(req, res){ res.send('The robot is happily running.'); });
 app.listen(process.env.PORT || 5000);
-// END HEROKU SETUP
 
 
-// Listbot config
-//
-// Config.keys uses environment variables so sensitive info is not in the repo.
+// 机器人List 配置
 var config = {
-    me: 'IsItAHotdog', // The authorized account with a list to retweet.
-    regexFilter: '', // Accept only tweets matching this regex pattern.
-    regexReject: '', // AND reject any tweets matching this regex pattern.
+    me: 'IsItAHotdog', // 认证的账号，进行retweet.
+    regexFilter: '', // 只接受符合正则匹配完成的推文.
+    regexReject: '', // 拒绝不符合模式的推文.
 
     keys: {
         consumer_key: process.env.TWITTER_CONSUMER_KEY,
@@ -26,7 +28,7 @@ var config = {
     },
 };
 
-// What to do after we retweet something.
+// retweet逻辑
 function onReTweet(err) {
     if(err) {
         console.error("retweeting failed :(");
@@ -45,12 +47,12 @@ function tweetBasedOnCategorization(tweet, isItAHotdog) {
     }, onReTweet);
 }
 
-// What to do when we get a tweet.
+// 对单条推文的操作.
 function onTweet(tweet) {
-    // Reject the tweet if:
-    //  1. it's flagged as a retweet
-    //  2. it matches our regex rejection criteria
-    //  3. it doesn't match our regex acceptance filter
+    // 如果满足以下条件，则拒绝:
+    //  1. 本身就是一条retweet
+    //  2. 匹配我们拒绝正则模式
+    //  3. 不匹配我们的接受正则模式
     var regexReject = new RegExp(config.regexReject, 'i');
     var regexFilter = new RegExp(config.regexFilter, 'i');
     if (tweet.retweeted) {
@@ -61,8 +63,6 @@ function onTweet(tweet) {
     }
     if (regexFilter.test(tweet.text)) {
         console.log(tweet);
-        // Note we're using the id_str property since javascript is not accurate
-        // for 64bit ints.
         var has_image = false;
         var image_url = '';
         if(tweet.entities.hasOwnProperty('media') && tweet.entities.media.length > 0) {
@@ -85,9 +85,9 @@ function onTweet(tweet) {
                         MinConfidence: 70
                     };
                     rekognition.detectLabels(params, function(err, data) {
-                        if (err) console.log(err, err.stack); // an error occurred
+                        if (err) console.log(err, err.stack);
                         else {
-                            console.log(data);           // successful response
+                            console.log(data);
                             var isItAHotdog = false;
                             for (var label_index in data.Labels) {
                                 var label = data.Labels[label_index];
@@ -112,7 +112,7 @@ function onTweet(tweet) {
     }
 }
 
-// Function for listening to twitter streams and retweeting on demand.
+// 监听twitter流，并且作出响应.
 function listen() {
     tu.filter({
         track: 'isitahotdog'
@@ -122,10 +122,7 @@ function listen() {
     });
 }
 
-// The application itself.
-// Use the tuiter node module to get access to twitter.
+
 var tu = require('tuiter')(config.keys);
 
-// Run the application. The callback in getListMembers ensures we get our list
-// of twitter streams before we attempt to listen to them via the twitter API.
 listen();
