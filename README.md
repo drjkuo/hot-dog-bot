@@ -109,10 +109,10 @@ Amazon Rekognition基于同样由Amazon计算机视觉科学家开发的成熟�
 ![测试](http://upload-images.jianshu.io/upload_images/4363003-c388ddadb880d566.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 
-这一切的开发过程都是非常的简单，如果你先看到源码的化，我fork了一份，并加入了中文注解。请点击[这里查看源码。]()
+这一切的开发过程都是非常的简单，如果你先看到源码的化，我fork了一份，并加入了中文注解。请点击[这里查看源码。](https://github.com/HOUCe/hot-dog-bot)
 
+本文翻译自[Building Silicon Valley’s Hot Dog App in One Night](https://hackernoon.com/building-silicon-valleys-hot-dog-app-in-one-night-aab8969cef0b)，对于原文进行了部分扩展。
 
+Happy Coding!
 
-
-
-
+PS: 作者[Github仓库](https://github.com/HOUCe)，欢迎通过代码各种形式交流。
