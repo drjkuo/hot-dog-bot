@@ -45,11 +45,11 @@ function onReTweet(err) {
   }
 }
 
-function tweetBasedOnCategorization(tweet, isItAHotdog) {
-  var message = " This is NOT a hotdog";
-  if(isItAHotdog) {
-    message = " This is a hotdog";
-  }
+function tweetBasedOnCategorization(tweet, whatIsIt) {
+  var message = " This is " + whatIsIt;
+  // if(isItAHotdog) {
+  //   message = " This is a hotdog";
+  // }
   tu.update({
     status: "@" + tweet.user.screen_name + message,
     in_reply_to_status_id: tweet.id_str
@@ -103,20 +103,27 @@ function onTweet(tweet) {
             if (err) console.log(err, err.stack);
             else {
               console.log('data',data);
-              var isItAHotdog = false;
-              for (var label_index in data.Labels) {
-                var label = data.Labels[label_index];
-                if(label['Name'] == "Hot Dog") {
-                  if(label['Confidence'] > 85) {
-                    isItAHotdog = true;
-                    tweetBasedOnCategorization(tweet, true);
-                    break;
-                  }
-                }
+              // var whatIsIt = "";
+              if (data.Labels.length > 0) {
+                console.log(data.Labels[0].Name);
+                // whatIsIt = data.Labels[0].Name;
+                // console.log(whatIsIt);
+                tweetBasedOnCategorization(tweet, data.Labels[0].Name);
               }
-              if(isItAHotdog == false) {
-                tweetBasedOnCategorization(tweet, false);
-              }
+
+              // for (var label_index in data.Labels) {
+              //   var label = data.Labels[label_index];
+              //   if(label['Name'] == "Hot Dog") {
+              //     if(label['Confidence'] > 85) {
+              //       isItAHotdog = true;
+              //       tweetBasedOnCategorization(tweet, true);
+              //       break;
+              //     }
+              //   }
+              // }
+              // if(isItAHotdog == false) {
+              //   tweetBasedOnCategorization(tweet, false);
+              // }
             }
           });
         }
